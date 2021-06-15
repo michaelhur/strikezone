@@ -195,7 +195,7 @@ def get_pitchfx(gamePk):
     bs_info = bs_content['info']
 
     umpires = [l for l in bs_info if l['label'] == "Umpires"][0]['value']
-    home_umpire = re.findall("HP: [\w ]+\.", umpires)[0].lstrip("HP: ").rstrip(".")
+    home_umpire = re.findall("HP: [\w \.]+ 1B:", umpires)[0].lstrip("HP: ").rstrip(". 1B:")
 
     pbp_url = base_url + "/v1/game/{gamePk}/playByPlay".format(gamePk = gamePk)
     pbp_content = get_json(pbp_url)
