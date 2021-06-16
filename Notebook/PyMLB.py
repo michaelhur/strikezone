@@ -1,13 +1,15 @@
 import time
 import requests
 import json
-from datetime import datetime 
+from datetime import datetime
+from datetime import timedelta
 import pytz
 import re
 
 eastern = pytz.timezone("US/Eastern")
 fmt = "%Y-%m-%d"
 today = datetime.today().astimezone().strftime(fmt)
+yesterday = (datetime.today().astimezone() - timedelta(days=1)).strftime(fmt)
 
 base_url = "http://statsapi.mlb.com/api/"
 alt_base_url = "https://beta-statsapi.mlb.com:443/api/"
@@ -44,7 +46,7 @@ def get_attendance(Id,
     suffix = ""
        
     if not any([date, startDate, endDate, season]):
-        date = today
+        date = yesterday
     
     if date is not None:
         suffix += "?date={}".format(date)
@@ -249,19 +251,22 @@ def get_pitchfx(gamePk):
             
             pitch_index = event['index']
             """
+            try:
+
+                strike = "strike" if not event['details']['isBall'] else "ball"
+                
+                pitch_data = event['pitchData']
+                
+                sz_top = pitch_data['strikeZoneTop']
+                sz_bottom = pitch_data['strikeZoneBottom']
+                x = pitch_data['coordinates']['pX']
+                z = pitch_data['coordinates']['pZ']
+                
+                #pitch_dict = {pitch_index: {'call': strike, 'sz_top': sz_top, 'sz_bottom': sz_bottom, 'x': x, 'z': z}}
+                pitch_list.append({'call': strike, 'sz_top': sz_top, 'sz_bottom': sz_bottom, 'x': x, 'z': z})
             
-            strike = "strike" if not event['details']['isBall'] else "ball"
-            
-            pitch_data = event['pitchData']
-            
-            sz_top = pitch_data['strikeZoneTop']
-            sz_bottom = pitch_data['strikeZoneBottom']
-            x = pitch_data['coordinates']['pX']
-            z = pitch_data['coordinates']['pZ']
-            
-            #pitch_dict = {pitch_index: {'call': strike, 'sz_top': sz_top, 'sz_bottom': sz_bottom, 'x': x, 'z': z}}
-            pitch_list.append({'call': strike, 'sz_top': sz_top, 'sz_bottom': sz_bottom, 'x': x, 'z': z})
-            
+            except:
+                pass
         atBat_dict[atBat_count]['pitchData'] = pitch_list
             
     return(atBat_dict)
