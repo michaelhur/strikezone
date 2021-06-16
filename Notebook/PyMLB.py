@@ -353,7 +353,6 @@ def get_schedule(date = None,
         suffix += "&teamId={}".format(teamId)
         
     schedule_url = schedule_base_url + suffix
-    print(schedule_url)
     schedule_content = get_json(schedule_url)
     
     schedule_dict = {}
