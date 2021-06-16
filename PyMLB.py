@@ -243,10 +243,14 @@ def get_pitchfx(gamePk):
             if not event['isPitch']:
                 continue
             
-            """
+
             if event['details']['isInPlay']:
                 continue
-            
+
+            if event['details']['description'] == "Foul":
+                continue
+
+            """
             strike = event['details']['isStrike']
             
             pitch_index = event['index']
@@ -254,7 +258,7 @@ def get_pitchfx(gamePk):
             try:
 
                 strike = "strike" if not event['details']['isBall'] else "ball"
-                
+
                 pitch_data = event['pitchData']
                 
                 sz_top = pitch_data['strikeZoneTop']
